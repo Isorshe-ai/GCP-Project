@@ -1,0 +1,72 @@
+# Google Cloud Fundamentals: Getting Started with Deployment Manager and Cloud Monitoring
+
+# Overview: In this lab, we create a deployment using Deployment Manager and use it to maintain a consistent state of deployment. we will also view resource usage in a VM instance using Cloud Monitoring.
+
+# Objectives
+# 1. Create a Deployment Manager deployment.
+# 2. Update a Deployment Manager deployment.
+# 3. View the load on a VM instance using Cloud Monitoring.
+
+# Confirm that needed APIs are enabled
+gcloud services list
+
+# If either API is missing run
+gcloud services enable deploymentManager.googleapis.com
+gcloud services enable runtimeConfiguration.googleapis.com
+gcloud services enable monitoring.googleapis.com
+
+# Next we place the zone into an environment variable called MY_ZONE. 
+
+export MY_ZONE=us-central1-a
+
+# we will also download an editable Deployment Manager template:
+
+gsutil cp gs://cloud-training/gcpfcoreinfra/mydeploy.yaml mydeploy.yaml
+
+# Then we replace the PROJECT_ID placeholder string with the Google Cloud Platform project ID using this command:
+
+sed -i -e "s/PROJECT_ID/$DEVSHELL_PROJECT_ID/" mydeploy.yaml
+
+# we will also replace the ZONE placeholder string with the Google Cloud Platform zone using this command:
+
+sed -i -e "s/ZONE/$MY_ZONE/" mydeploy.yaml
+
+# we then View the mydeploy.yaml file
+
+cat mydeploy.yaml
+
+# then we Build a deployment from the template:
+
+gcloud deployment-manager deployments create my-first-depl --config mydeploy.yaml
+
+# When the deployment operation is complete, the gcloud command displays a list of the resources named in the template and their current state.
+
+
+# Update a Deployment Manager deployment using nano editor
+
+nano mydeploy.yaml
+
+# Find the line that sets the value of the startup script, value: "apt-get update", and edit it so that it looks like this:
+
+      value: "apt-get update; apt-get install nginx-light -y"
+
+# we again update the deployment to install the new startup script:
+
+gcloud deployment-manager deployments update my-first-depl --config mydeploy.yaml
+
+# next we SSH into the my-vm instance
+
+gcloud compute ssh my-vm --zone=MY_ZONE 
+
+# In the ssh session on my-vm, execute this command to create a CPU load:
+
+dd if=/dev/urandom | gzip -9 >> /dev/null &
+
+
+# Create a Monitoring workspace
+we will now use the console to monitor the load as there is no gcloud command to do that.
+
+# lastly Terminate the workload generator
+
+kill %1
+

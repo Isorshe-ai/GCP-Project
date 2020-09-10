@@ -1,0 +1,66 @@
+# Google Cloud Fundamentals: Getting Started with GKE
+# Overview: In this lab, we will create a Google Kubernetes Engine cluster containing several containers, each containing a web server. we will place a load balancer in front of the cluster and view its contents.
+# we will be running all commands on cloud shell.
+# Objectives:
+# 1. Provision a Kubernetes cluster using Kubernetes Engine.
+# 2. Deploy and manage Docker containers using kubectl.
+
+# Task 1: Confirm that needed APIs are enabled by running 
+gcloud services list
+
+# scroll through the list and ensure that Kubernetes Engine API and Container Registry API are listed.
+
+# If either API is missing run
+gcloud services enable kubernetes.googleapis.com
+gcloud services enable containers.googleapis.com
+
+# Next we setup our desired zone as an environment variable 
+export MY_ZONE=us-central1-a
+
+# We then start a Kubernetes cluster managed by Kubernetes Engine named webfrontend and configure it to run 2 nodes:
+
+gcloud container clusters create webfrontend --zone $MY_ZONE --num-nodes 2
+
+# After the cluster is created, check your installed version of Kubernetes using the kubectl version command:
+
+kubectl version
+
+# Next we Run and deploy a single instance of the nginx container
+
+ kubectl create deploy nginx --image=nginx:1.17.10
+
+
+# View the pod running the nginx container:
+
+kubectl get pods
+
+# Expose the nginx container to the Internet:
+
+kubectl expose deployment nginx --port 80 --type LoadBalancer
+
+
+# View the new service:
+
+kubectl get services
+
+# You can use the displayed external IP address to test and contact the nginx container remotely.
+
+# It may take a few seconds before the External-IP field is populated for your service. This is normal. Just re-run the kubectl get services command every few seconds until the field is populated.
+
+# Open a new web browser tab and paste your cluster's external IP address into the address bar. The default home page of the Nginx browser is displayed.
+
+# Scale up the number of pods running on your service:
+
+kubectl scale deployment nginx --replicas 3
+
+
+# Confirm that Kubernetes has updated the number of pods:
+
+kubectl get pods
+
+# Confirm that your external IP address has not changed:
+
+kubectl get services
+
+
+# Summary: In this lab, we configured a Kubernetes cluster in Kubernetes Engine. We also populated the cluster with several pods containing an application, exposed the application, and scaled the application.

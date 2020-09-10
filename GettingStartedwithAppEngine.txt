@@ -1,0 +1,83 @@
+
+# Title: Google Cloud Fundamentals: Getting Started with App Engine
+
+# Overview: In this lab, we will create and deploy a simple App Engine application using a virtual environment in the Google Cloud Shell.
+
+# Objectives:
+# 1. Initialize App Engine.
+
+# 2. Preview an App Engine application running locally in Cloud Shell.
+
+# 3. Deploy an App Engine application, so that others can reach it.
+
+
+# To list the active account we will be working with we run the command:
+gcloud auth list
+
+# To verify the project ID, we run:
+
+gcloud config list project
+
+
+# Task 1: Initialize App Engine
+
+# To Initialize our App Engine app with our project and choose its region, we run:
+
+gcloud app create --project=$DEVSHELL_PROJECT_ID
+
+# Next we Clone the source code repository for a sample application in the hello_world directory:
+
+git clone https://github.com/GoogleCloudPlatform/python-docs-samples
+
+# Then we Navigate to the source directory:
+
+cd python-docs-samples/appengine/standard_python3/hello_world
+
+
+# Task 2: Run Hello World application locally
+# we Execute the following command to download and update the packages list.
+
+sudo apt-get update
+
+# Next we Set up a virtual environment in which we will run our application. Python virtual environments are used to isolate package installations from the system.
+
+sudo apt-get install virtualenv
+
+# If prompted [Y/n], press Y and then Enter.
+
+virtualenv -p python3 venv
+
+# To Activate the virtual environment.
+
+source venv/bin/activate
+
+# Then we Navigate to our project directory and install dependencies.
+
+pip install  -r requirements.txt
+
+# To Run the application:
+
+python main.py
+
+# In Cloud Shell, click Web preview (Web Preview) > Preview on port 8080 to preview the application.
+
+
+# Task 3: Deploy and run Hello World on App Engine
+# To deploy our application to the App Engine Standard environment: Navigate to the source directory:
+
+cd ~/python-docs-samples/appengine/standard_python3/hello_world
+
+# To Deploy our Hello World application.
+
+gcloud app deploy
+
+# If prompted "Do we want to continue (Y/n)?", press Y and then Enter.
+
+# Launch our browser to view the app at http://our_PROJECT_ID.appspot.com
+
+gcloud app browse
+
+# Then we Copy and paste the URL into a new browser window.
+
+
+
